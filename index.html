@@ -21,26 +21,31 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        
         body {
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
-            height: 100vh;
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         
         .container {
-            max-width: 100%;
-            height: 100vh;
+            flex: 1;
             display: flex;
             flex-direction: column;
+            height: 100%;
+            max-width: 100%;
         }
         
         header {
             background-color: var(--secondary-color);
             color: white;
             padding: 1rem 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             flex-shrink: 0;
         }
         
@@ -48,29 +53,28 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            font-size: 1.5rem;
         }
         
         header h1 i {
             color: var(--primary-color);
         }
         
-        .dashboard-container {
-            display: flex;
+        .main-wrapper {
             flex: 1;
+            display: flex;
             overflow: hidden;
-            padding: 20px;
-            gap: 20px;
+            padding: 0;
         }
         
         .sidebar {
             background-color: white;
-            border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             width: 300px;
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
+            border-right: 1px solid #e1e1e1;
             overflow-y: auto;
         }
         
@@ -120,11 +124,7 @@
             color: var(--danger-color);
         }
         
-        .main-content {
-            background-color: white;
-            border-radius: 8px;
-            padding: 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        .content-area {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -133,10 +133,9 @@
         
         .dashboard-header {
             padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background-color: white;
+            border-bottom: 1px solid #e1e1e1;
+            flex-shrink: 0;
         }
         
         .dashboard-title {
@@ -145,11 +144,17 @@
             color: var(--secondary-color);
         }
         
+        .dashboard-view-container {
+            flex: 1;
+            overflow: hidden;
+            background-color: #f9f9f9;
+        }
+        
         .dashboard-view {
             width: 100%;
-            flex: 1;
+            height: 100%;
             border: none;
-            background-color: #f9f9f9;
+            display: block;
         }
         
         .no-dashboard {
@@ -305,17 +310,18 @@
         }
         
         @media (max-width: 768px) {
-            .dashboard-container {
+            .main-wrapper {
                 flex-direction: column;
-                padding: 10px;
             }
             
             .sidebar {
                 width: 100%;
                 max-height: 200px;
+                border-right: none;
+                border-bottom: 1px solid #e1e1e1;
             }
             
-            .main-content {
+            .content-area {
                 min-height: 400px;
             }
         }
@@ -328,7 +334,7 @@
             <h1><i class="fas fa-chart-line"></i> Visualizador de Dashboards Power BI</h1>
         </header>
         
-        <div class="dashboard-container">
+        <div class="main-wrapper">
             <div class="sidebar">
                 <h2>Gestionar Dashboards</h2>
                 <button id="addDashboardBtn" class="btn-primary" style="width: 100%; margin-top: 10px;">
@@ -344,7 +350,7 @@
                 </div>
             </div>
             
-            <div class="main-content">
+            <div class="content-area">
                 <div id="dashboardViewer">
                     <div class="no-dashboard" id="noDashboard">
                         <i class="fas fa-chart-bar"></i>
@@ -357,7 +363,9 @@
                             <div class="dashboard-title" id="dashboardTitle">Dashboard</div>
                             <div class="dashboard-info" id="dashboardInfo"></div>
                         </div>
-                        <iframe class="dashboard-view" id="dashboardFrame"></iframe>
+                        <div class="dashboard-view-container">
+                            <iframe class="dashboard-view" id="dashboardFrame"></iframe>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -509,15 +517,22 @@
                 elements.noDashboard.classList.add('hidden');
                 elements.dashboardContainer.classList.remove('hidden');
                 elements.dashboardTitle.textContent = dashboard.name;
-                elements.dashboardFrame.srcdoc = dashboard.iframe;
+                
+                // Extraer solo el contenido del src del iframe
+                const srcMatch = dashboard.iframe.match(/src="([^"]*)"/);
+                if (srcMatch && srcMatch[1]) {
+                    // Usar el src directamente en el iframe
+                    elements.dashboardFrame.src = srcMatch[1];
+                } else {
+                    // Fallback: usar srcdoc
+                    elements.dashboardFrame.srcdoc = dashboard.iframe;
+                }
                 
                 // Actualizar información del dashboard
                 elements.dashboardInfo.innerHTML = `
                     <small>Microsoft Power BI</small>
                 `;
             }
-            
-            renderDashboards();
         }
         
         function openAddModal() {
@@ -662,6 +677,16 @@
         if (state.dashboards.length > 0 && !state.currentDashboard) {
             selectDashboard(state.dashboards[0].id);
         }
+        
+        // Ajustar el iframe cuando cambie el tamaño de la ventana
+        window.addEventListener('resize', function() {
+            if (state.currentDashboard) {
+                // Forzar un redimensionamiento del iframe
+                const iframe = elements.dashboardFrame;
+                iframe.style.height = '100%';
+                iframe.style.width = '100%';
+            }
+        });
     </script>
 </body>
 </html>
