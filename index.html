@@ -19,17 +19,17 @@
         }
 
         body {
-            background: #f8f9fa;
+            background: #ffffff;
             display: flex;
             flex-direction: column;
         }
 
-        /* Header ultra compacto */
+        /* Header compacto */
         .header {
             background: #2c3e50;
             color: white;
-            padding: 6px 12px;
-            height: 40px;
+            padding: 8px 16px;
+            height: 50px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
@@ -38,29 +38,29 @@
         }
 
         .header h1 {
-            font-size: 1rem;
+            font-size: 1.1rem;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .header-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
         }
 
-        /* Layout principal - Sin espacios */
+        /* Layout principal */
         .main-container {
             flex: 1;
             display: flex;
-            height: calc(100vh - 40px);
+            height: calc(100vh - 50px);
             overflow: hidden;
             background: white;
         }
 
-        /* Sidebar compacto */
+        /* Sidebar */
         .sidebar {
-            width: 220px;
+            width: 260px;
             background: #34495e;
             color: white;
             display: flex;
@@ -70,29 +70,29 @@
         }
 
         .sidebar-header {
-            padding: 8px;
+            padding: 12px;
             border-bottom: 1px solid #4a6278;
         }
 
         .sidebar-header h2 {
-            font-size: 0.85rem;
-            margin-bottom: 6px;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
         }
 
         .dashboard-list {
             flex: 1;
             overflow-y: auto;
-            padding: 4px;
+            padding: 8px;
         }
 
         .dashboard-item {
-            padding: 6px 8px;
-            margin: 1px 0;
+            padding: 10px 12px;
+            margin: 4px 0;
             background: #4a6278;
-            border-radius: 2px;
+            border-radius: 4px;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -110,7 +110,7 @@
 
         .item-actions {
             display: flex;
-            gap: 2px;
+            gap: 4px;
         }
 
         .item-actions button {
@@ -118,50 +118,63 @@
             border: none;
             color: inherit;
             cursor: pointer;
-            padding: 1px;
-            font-size: 0.65rem;
+            padding: 2px 4px;
+            font-size: 0.75rem;
+            border-radius: 2px;
         }
 
-        /* Área principal - Sin espacios negros */
+        .item-actions button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Área principal - CORREGIDA */
         .content-area {
             flex: 1;
             display: flex;
             flex-direction: column;
             background: white;
-            margin: 0;
-            padding: 0;
+            min-width: 0; /* Importante para flexbox */
         }
 
         .dashboard-header {
             background: #2c3e50;
             color: white;
-            padding: 4px 8px;
-            height: 30px;
+            padding: 8px 16px;
+            height: 45px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 0.75rem;
+            font-size: 0.9rem;
         }
 
-        /* Contenedor del iframe - Sin márgenes ni padding */
-        .dashboard-container {
+        /* CONTENEDOR PRINCIPAL CORREGIDO */
+        .dashboard-viewer {
             flex: 1;
+            display: flex;
+            flex-direction: column;
             background: white;
-            margin: 0;
-            padding: 0;
             position: relative;
             overflow: hidden;
         }
 
+        .dashboard-container {
+            flex: 1;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            min-height: 0; /* Crucial para flexbox */
+        }
+
         .dashboard-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             border: none;
-            margin: 0;
-            padding: 0;
-            display: block;
             background: white;
+            display: block;
         }
 
         /* Estados vacíos */
@@ -173,31 +186,41 @@
             height: 100%;
             color: #666;
             text-align: center;
-            padding: 20px;
+            padding: 40px;
             background: white;
         }
 
         .empty-state i {
-            font-size: 2.5rem;
-            margin-bottom: 0.8rem;
-            color: #888;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #bdc3c7;
         }
 
-        /* Botones compactos */
+        .empty-state h2 {
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .empty-state p {
+            color: #7f8c8d;
+        }
+
+        /* Botones */
         button {
             background: #f2c811;
             color: #2c3e50;
             border: none;
-            padding: 4px 8px;
-            border-radius: 2px;
+            padding: 8px 16px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             font-weight: bold;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
 
         button:hover {
             background: #e6b90a;
+            transform: translateY(-1px);
         }
 
         button.btn-secondary {
@@ -225,14 +248,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.7);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
         .modal.show {
@@ -242,12 +265,13 @@
 
         .modal-content {
             background: white;
-            padding: 15px;
-            border-radius: 4px;
+            padding: 24px;
+            border-radius: 8px;
             width: 90%;
-            max-width: 450px;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             transform: translateY(-20px);
-            transition: transform 0.3s;
+            transition: transform 0.3s ease;
         }
 
         .modal.show .modal-content {
@@ -258,54 +282,79 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ecf0f1;
         }
 
         .modal-header h2 {
-            font-size: 1rem;
+            font-size: 1.3rem;
             color: #2c3e50;
+            margin: 0;
         }
 
         .close-modal {
             background: none;
             border: none;
-            font-size: 1.1rem;
+            font-size: 1.4rem;
             cursor: pointer;
-            color: #666;
+            color: #7f8c8d;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            color: #34495e;
+            background: #ecf0f1;
+            border-radius: 50%;
         }
 
         .form-group {
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 3px;
-            font-weight: 500;
+            margin-bottom: 6px;
+            font-weight: 600;
             color: #2c3e50;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
         }
 
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 2px;
-            font-size: 0.8rem;
+            padding: 10px 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
         }
 
         .form-group textarea {
-            min-height: 80px;
+            min-height: 120px;
             resize: vertical;
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
         }
 
         .modal-footer {
             display: flex;
             justify-content: flex-end;
-            gap: 6px;
-            margin-top: 12px;
+            gap: 10px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
         }
 
         /* Utilidades */
@@ -313,45 +362,80 @@
             display: none !important;
         }
 
-        /* Responsive */
+        /* Responsive mejorado */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+        }
+
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
+                height: auto;
+                min-height: calc(100vh - 50px);
             }
             
             .sidebar {
                 width: 100%;
-                height: 120px;
+                height: auto;
+                max-height: 200px;
                 border-right: none;
                 border-bottom: 1px solid #4a6278;
             }
             
             .dashboard-list {
                 display: flex;
-                gap: 4px;
-                padding: 4px;
+                gap: 8px;
+                padding: 8px;
                 overflow-x: auto;
             }
             
             .dashboard-item {
-                min-width: 100px;
+                min-width: 140px;
                 white-space: nowrap;
+                flex-shrink: 0;
             }
             
             .header {
-                height: 35px;
-                padding: 4px 8px;
+                padding: 6px 12px;
             }
             
             .header h1 {
-                font-size: 0.9rem;
+                font-size: 1rem;
+            }
+            
+            button {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                height: 45px;
+            }
+            
+            .main-container {
+                height: calc(100vh - 45px);
+            }
+            
+            .dashboard-header {
+                height: 40px;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .modal-content {
+                padding: 20px;
+                margin: 10px;
             }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Header ultra compacto -->
+    <!-- Header -->
     <div class="header">
         <h1>
             <i class="fas fa-chart-line"></i>
@@ -359,42 +443,43 @@
         </h1>
         <div class="header-actions">
             <button id="addDashboardBtn">
-                <i class="fas fa-plus"></i> Nuevo
+                <i class="fas fa-plus"></i> Nuevo Dashboard
             </button>
         </div>
     </div>
 
-    <!-- Contenedor Principal - Sin espacios -->
+    <!-- Contenedor Principal -->
     <div class="main-container">
-        <!-- Sidebar compacto -->
+        <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <h2>Dashboards</h2>
+                <small>Selecciona un dashboard para visualizar</small>
             </div>
             <div class="dashboard-list" id="dashboardList">
                 <div class="empty-state" id="emptyState">
                     <i class="fas fa-folder-open"></i>
-                    <p>No hay dashboards</p>
+                    <p>No hay dashboards disponibles</p>
                 </div>
             </div>
         </div>
 
-        <!-- Área de Contenido - Sin espacios negros -->
+        <!-- Área de Contenido CORREGIDA -->
         <div class="content-area">
             <div class="dashboard-header">
                 <div class="dashboard-title" id="dashboardTitle">Selecciona un dashboard</div>
                 <div class="dashboard-info" id="dashboardInfo"></div>
             </div>
             
-            <div id="dashboardViewer">
+            <div class="dashboard-viewer" id="dashboardViewer">
                 <!-- Estado vacío -->
                 <div class="empty-state" id="noDashboard">
                     <i class="fas fa-chart-bar"></i>
                     <h2>Sin dashboard seleccionado</h2>
-                    <p>Selecciona un dashboard de la lista o agrega uno nuevo</p>
+                    <p>Selecciona un dashboard de la lista o agrega uno nuevo para comenzar</p>
                 </div>
 
-                <!-- Contenedor del dashboard - Sin márgenes -->
+                <!-- Contenedor del dashboard CORREGIDO -->
                 <div class="dashboard-container hidden" id="dashboardContainer">
                     <iframe class="dashboard-frame" id="dashboardFrame" 
                             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
@@ -415,11 +500,14 @@
             <form id="dashboardForm">
                 <div class="form-group">
                     <label for="dashboardName">Nombre del Dashboard</label>
-                    <input type="text" id="dashboardName" required placeholder="Ej: Ventas 2024">
+                    <input type="text" id="dashboardName" required placeholder="Ej: Ventas 2024 - Dashboard Principal">
                 </div>
                 <div class="form-group">
                     <label for="dashboardIframe">Código iframe de Power BI</label>
-                    <textarea id="dashboardIframe" required placeholder='&lt;iframe title="Dashboard" width="100%" height="100%" src="https://app.powerbi.com/..." frameborder="0" allowFullScreen="true"&gt;&lt;/iframe&gt;'></textarea>
+                    <textarea id="dashboardIframe" required placeholder='Pega aquí el código iframe completo de Power BI. Ejemplo:&#10;&lt;iframe title="Dashboard Ventas" width="100%" height="100%" src="https://app.powerbi.com/view?r=eyJrIjoi..." frameborder="0" allowFullScreen="true"&gt;&lt;/iframe&gt;'></textarea>
+                    <small style="color: #666; margin-top: 4px; display: block;">
+                        Copia el código iframe desde Power BI Service → Embed → Website
+                    </small>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-secondary" id="cancelBtn">Cancelar</button>
@@ -436,10 +524,10 @@
                 <h2>Confirmar Eliminación</h2>
                 <button class="close-modal" id="closeDeleteModal">&times;</button>
             </div>
-            <p>¿Estás seguro de que deseas eliminar este dashboard? Esta acción no se puede deshacer.</p>
+            <p>¿Estás seguro de que deseas eliminar el dashboard "<span id="deleteDashboardName"></span>"? Esta acción no se puede deshacer.</p>
             <div class="modal-footer">
                 <button type="button" class="btn-secondary" id="cancelDeleteBtn">Cancelar</button>
-                <button type="button" class="btn-danger" id="confirmDeleteBtn">Eliminar</button>
+                <button type="button" class="btn-danger" id="confirmDeleteBtn">Eliminar Dashboard</button>
             </div>
         </div>
     </div>
@@ -479,6 +567,7 @@
             dashboardName: document.getElementById('dashboardName'),
             dashboardIframe: document.getElementById('dashboardIframe'),
             modalTitle: document.getElementById('modalTitle'),
+            deleteDashboardName: document.getElementById('deleteDashboardName'),
             closeModal: document.getElementById('closeModal'),
             cancelBtn: document.getElementById('cancelBtn'),
             saveBtn: document.getElementById('saveBtn'),
@@ -517,8 +606,8 @@
                 item.innerHTML = `
                     <span>${dashboard.name}</span>
                     <div class="item-actions">
-                        <button class="edit" title="Editar"><i class="fas fa-edit"></i></button>
-                        <button class="delete" title="Eliminar"><i class="fas fa-trash"></i></button>
+                        <button class="edit" title="Editar dashboard"><i class="fas fa-edit"></i></button>
+                        <button class="delete" title="Eliminar dashboard"><i class="fas fa-trash"></i></button>
                     </div>
                 `;
                 
@@ -540,7 +629,7 @@
             });
         }
 
-        // Seleccionar dashboard - Optimizado para usar todo el espacio
+        // CORREGIDO: Seleccionar dashboard con iframe optimizado
         function selectDashboard(id) {
             state.currentDashboard = id;
             const dashboard = state.dashboards.find(d => d.id === id);
@@ -551,38 +640,34 @@
                 elements.dashboardTitle.textContent = dashboard.name;
                 elements.dashboardInfo.innerHTML = '<small>Microsoft Power BI</small>';
                 
-                // Extraer URL del iframe y optimizar para uso completo del espacio
+                // Extraer URL del iframe y optimizar para visualización completa
                 const srcMatch = dashboard.iframe.match(/src="([^"]*)"/);
                 if (srcMatch && srcMatch[1]) {
                     let srcUrl = srcMatch[1];
                     
-                    // Agregar parámetros para optimizar la visualización
-                    const urlParams = new URLSearchParams();
-                    if (srcUrl.includes('?')) {
-                        const existingParams = new URLSearchParams(srcUrl.split('?')[1]);
-                        existingParams.forEach((value, key) => {
-                            urlParams.set(key, value);
-                        });
-                    }
+                    // Crear URL optimizada para Power BI
+                    const url = new URL(srcUrl);
                     
-                    // Parámetros esenciales para Power BI
-                    urlParams.set('autoAuth', 'true');
-                    urlParams.set('navContentPaneEnabled', 'false');
-                    urlParams.set('filterPaneEnabled', 'false');
+                    // Parámetros esenciales para visualización completa
+                    url.searchParams.set('autoAuth', 'true');
+                    url.searchParams.set('navContentPaneEnabled', 'false');
+                    url.searchParams.set('filterPaneEnabled', 'false');
+                    url.searchParams.set('config', 'reportLevelNav.disabled');
                     
-                    const baseUrl = srcUrl.split('?')[0];
-                    const optimizedUrl = `${baseUrl}?${urlParams.toString()}`;
-                    
-                    elements.dashboardFrame.src = optimizedUrl;
+                    // Usar la URL optimizada
+                    elements.dashboardFrame.src = url.toString();
+                } else {
+                    // Fallback: usar el iframe original
+                    elements.dashboardFrame.srcdoc = dashboard.iframe;
                 }
                 
                 renderDashboards();
                 
-                // Forzar redimensionamiento
+                // Forzar redimensionamiento después de la carga
                 setTimeout(() => {
                     elements.dashboardFrame.style.width = '100%';
                     elements.dashboardFrame.style.height = '100%';
-                }, 100);
+                }, 500);
             }
         }
 
@@ -593,6 +678,7 @@
             elements.dashboardName.value = '';
             elements.dashboardIframe.value = '';
             showModal(elements.dashboardModal);
+            elements.dashboardName.focus();
         }
 
         function openEditModal(id) {
@@ -604,11 +690,16 @@
                 elements.dashboardName.value = dashboard.name;
                 elements.dashboardIframe.value = dashboard.iframe;
                 showModal(elements.dashboardModal);
+                elements.dashboardName.focus();
             }
         }
 
         function openDeleteModal(id) {
             state.editingId = id;
+            const dashboard = state.dashboards.find(d => d.id === id);
+            if (dashboard) {
+                elements.deleteDashboardName.textContent = dashboard.name;
+            }
             showModal(elements.deleteModal);
         }
 
@@ -617,12 +708,12 @@
             const iframe = elements.dashboardIframe.value.trim();
             
             if (!name || !iframe) {
-                alert('Por favor completa todos los campos');
+                alert('Por favor completa todos los campos requeridos');
                 return;
             }
             
             if (!iframe.includes('<iframe') || !iframe.includes('</iframe>')) {
-                alert('Por favor ingresa un código iframe válido');
+                alert('Por favor ingresa un código iframe válido de Power BI');
                 return;
             }
             
@@ -677,11 +768,13 @@
         elements.cancelDeleteBtn.addEventListener('click', () => hideModal(elements.deleteModal));
         elements.confirmDeleteBtn.addEventListener('click', deleteDashboard);
 
+        // Cerrar modales al hacer clic fuera
         window.addEventListener('click', (e) => {
             if (e.target === elements.dashboardModal) hideModal(elements.dashboardModal);
             if (e.target === elements.deleteModal) hideModal(elements.deleteModal);
         });
 
+        // Cerrar modales con ESC
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 hideModal(elements.dashboardModal);
@@ -689,17 +782,34 @@
             }
         });
 
-        // Inicializar
+        // Inicializar aplicación
         renderDashboards();
         if (state.dashboards.length > 0 && !state.currentDashboard) {
             selectDashboard(state.dashboards[0].id);
         }
 
-        // Ajustar iframe continuamente
+        // CORREGIDO: Ajuste responsivo continuo
         window.addEventListener('resize', () => {
             if (state.currentDashboard) {
-                elements.dashboardFrame.style.width = '100%';
-                elements.dashboardFrame.style.height = '100%';
+                // Forzar recálculo del layout
+                elements.dashboardFrame.style.width = '99%';
+                setTimeout(() => {
+                    elements.dashboardFrame.style.width = '100%';
+                }, 50);
+            }
+        });
+
+        // CORREGIDO: Manejar carga del iframe
+        elements.dashboardFrame.addEventListener('load', function() {
+            // Asegurar que el iframe ocupe todo el espacio
+            this.style.width = '100%';
+            this.style.height = '100%';
+            
+            // Intentar comunicarse con el contenido de Power BI
+            try {
+                this.contentWindow.postMessage({ type: 'resize', width: this.offsetWidth, height: this.offsetHeight }, '*');
+            } catch (e) {
+                // Ignorar errores de cross-origin
             }
         });
     </script>
