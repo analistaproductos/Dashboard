@@ -211,7 +211,7 @@
         }
         
         .hidden {
-            display: none;
+            display: none !important;
         }
         
         .modal {
@@ -225,6 +225,14 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
         }
         
         .modal-content {
@@ -234,6 +242,12 @@
             width: 90%;
             max-width: 500px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal.show .modal-content {
+            transform: translateY(0);
         }
         
         .modal-header {
@@ -316,7 +330,7 @@
     </div>
     
     <!-- Modal para agregar/editar dashboard -->
-    <div class="modal hidden" id="dashboardModal">
+    <div class="modal" id="dashboardModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle">Agregar Dashboard</h2>
@@ -340,7 +354,7 @@
     </div>
     
     <!-- Modal de confirmación para eliminar -->
-    <div class="modal hidden" id="deleteModal">
+    <div class="modal" id="deleteModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Eliminar Dashboard</h2>
@@ -382,6 +396,17 @@
             cancelDeleteBtn: document.getElementById('cancelDeleteBtn'),
             confirmDeleteBtn: document.getElementById('confirmDeleteBtn')
         };
+        
+        // Funciones para mostrar/ocultar modales
+        function showModal(modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+        }
+        
+        function hideModal(modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = ''; // Restaurar scroll del body
+        }
         
         // Funciones
         function renderDashboards() {
@@ -445,7 +470,7 @@
             elements.modalTitle.textContent = 'Agregar Dashboard';
             elements.dashboardName.value = '';
             elements.dashboardIframe.value = '';
-            elements.dashboardModal.classList.remove('hidden');
+            showModal(elements.dashboardModal);
         }
         
         function openEditModal(id) {
@@ -456,13 +481,13 @@
                 elements.modalTitle.textContent = 'Editar Dashboard';
                 elements.dashboardName.value = dashboard.name;
                 elements.dashboardIframe.value = dashboard.iframe;
-                elements.dashboardModal.classList.remove('hidden');
+                showModal(elements.dashboardModal);
             }
         }
         
         function openDeleteModal(id) {
             state.editingId = id;
-            elements.deleteModal.classList.remove('hidden');
+            showModal(elements.deleteModal);
         }
         
         function saveDashboard() {
@@ -501,12 +526,15 @@
             localStorage.setItem('powerbiDashboards', JSON.stringify(state.dashboards));
             
             // Cerrar modal y actualizar la vista
-            elements.dashboardModal.classList.add('hidden');
+            hideModal(elements.dashboardModal);
             renderDashboards();
             
             // Si estamos editando, mantener seleccionado el dashboard
             if (state.editingId) {
                 selectDashboard(state.editingId);
+            } else if (state.dashboards.length === 1) {
+                // Si es el primer dashboard, seleccionarlo automáticamente
+                selectDashboard(state.dashboards[0].id);
             }
         }
         
@@ -524,7 +552,7 @@
             localStorage.setItem('powerbiDashboards', JSON.stringify(state.dashboards));
             
             // Cerrar modal y actualizar la vista
-            elements.deleteModal.classList.add('hidden');
+            hideModal(elements.deleteModal);
             renderDashboards();
         }
         
@@ -532,11 +560,11 @@
         elements.addDashboardBtn.addEventListener('click', openAddModal);
         
         elements.closeModal.addEventListener('click', () => {
-            elements.dashboardModal.classList.add('hidden');
+            hideModal(elements.dashboardModal);
         });
         
         elements.cancelBtn.addEventListener('click', () => {
-            elements.dashboardModal.classList.add('hidden');
+            hideModal(elements.dashboardModal);
         });
         
         elements.dashboardForm.addEventListener('submit', (e) => {
@@ -545,11 +573,11 @@
         });
         
         elements.closeDeleteModal.addEventListener('click', () => {
-            elements.deleteModal.classList.add('hidden');
+            hideModal(elements.deleteModal);
         });
         
         elements.cancelDeleteBtn.addEventListener('click', () => {
-            elements.deleteModal.classList.add('hidden');
+            hideModal(elements.deleteModal);
         });
         
         elements.confirmDeleteBtn.addEventListener('click', deleteDashboard);
@@ -557,10 +585,18 @@
         // Cerrar modales al hacer clic fuera del contenido
         window.addEventListener('click', (e) => {
             if (e.target === elements.dashboardModal) {
-                elements.dashboardModal.classList.add('hidden');
+                hideModal(elements.dashboardModal);
             }
             if (e.target === elements.deleteModal) {
-                elements.deleteModal.classList.add('hidden');
+                hideModal(elements.deleteModal);
+            }
+        });
+        
+        // Cerrar modales con la tecla Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideModal(elements.dashboardModal);
+                hideModal(elements.deleteModal);
             }
         });
         
