@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Dashboards Power BI</title>
+    <style>
+        :root {
+            --primary-color: #f2c811;
+            --secondary-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        header h1 i {
+            color: var(--primary-color);
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .sidebar {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+        
+        .dashboard-list {
+            margin-top: 20px;
+        }
+        
+        .dashboard-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: var(--light-color);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dashboard-item:hover {
+            background-color: #dde4e6;
+        }
+        
+        .dashboard-item.active {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        .dashboard-item .actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .dashboard-item .actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .dashboard-item .actions .delete {
+            color: var(--danger-color);
+        }
+        
+        .main-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            min-height: 600px;
+        }
+        
+        .dashboard-view {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .no-dashboard {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 600px;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .no-dashboard i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--dark-color);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        .btn-primary:hover {
+            background-color: #e6b90a;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #7f8c8d;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-chart-line"></i> Visualizador de Dashboards Power BI</h1>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="dashboard-container">
+            <div class="sidebar">
+                <h2>Gestionar Dashboards</h2>
+                <button id="addDashboardBtn" class="btn-primary" style="width: 100%; margin-top: 10px;">
+                    <i class="fas fa-plus"></i> Agregar Dashboard
+                </button>
+                
+                <div class="dashboard-list" id="dashboardList">
+                    <!-- Los dashboards se cargarán aquí dinámicamente -->
+                    <div class="empty-state" id="emptyState">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No hay dashboards agregados</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div id="dashboardViewer">
+                    <div class="no-dashboard" id="noDashboard">
+                        <i class="fas fa-chart-bar"></i>
+                        <h2>Selecciona un dashboard para visualizar</h2>
+                        <p>Agrega un dashboard usando el botón "Agregar Dashboard"</p>
+                    </div>
+                    <iframe class="dashboard-view hidden" id="dashboardFrame"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para agregar/editar dashboard -->
+    <div class="modal hidden" id="dashboardModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Agregar Dashboard</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <form id="dashboardForm">
+                <div class="form-group">
+                    <label for="dashboardName">Nombre del Dashboard</label>
+                    <input type="text" id="dashboardName" required>
+                </div>
+                <div class="form-group">
+                    <label for="dashboardIframe">Código iframe</label>
+                    <textarea id="dashboardIframe" placeholder='Pega aquí el código iframe de Power BI. Ejemplo: &lt;iframe title="Reporte" width="100%" height="100%" src="https://app.powerbi.com/..." frameborder="0" allowFullScreen="true"&gt;&lt;/iframe&gt;' required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancelBtn">Cancelar</button>
+                    <button type="submit" class="btn-primary" id="saveBtn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal de confirmación para eliminar -->
+    <div class="modal hidden" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Eliminar Dashboard</h2>
+                <button class="close-modal" id="closeDeleteModal">&times;</button>
+            </div>
+            <p>¿Estás seguro de que deseas eliminar este dashboard? Esta acción no se puede deshacer.</p>
+            <div class="modal-footer">
+                <button type="button" id="cancelDeleteBtn">Cancelar</button>
+                <button type="button" class="btn-danger" id="confirmDeleteBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estado de la aplicación
+        const state = {
+            dashboards: JSON.parse(localStorage.getItem('powerbiDashboards')) || [],
+            currentDashboard: null,
+            editingId: null
+        };
+        
+        // Elementos DOM
+        const elements = {
+            dashboardList: document.getElementById('dashboardList'),
+            emptyState: document.getElementById('emptyState'),
+            noDashboard: document.getElementById('noDashboard'),
+            dashboardFrame: document.getElementById('dashboardFrame'),
+            addDashboardBtn: document.getElementById('addDashboardBtn'),
+            dashboardModal: document.getElementById('dashboardModal'),
+            closeModal: document.getElementById('closeModal'),
+            cancelBtn: document.getElementById('cancelBtn'),
+            dashboardForm: document.getElementById('dashboardForm'),
+            dashboardName: document.getElementById('dashboardName'),
+            dashboardIframe: document.getElementById('dashboardIframe'),
+            modalTitle: document.getElementById('modalTitle'),
+            saveBtn: document.getElementById('saveBtn'),
+            deleteModal: document.getElementById('deleteModal'),
+            closeDeleteModal: document.getElementById('closeDeleteModal'),
+            cancelDeleteBtn: document.getElementById('cancelDeleteBtn'),
+            confirmDeleteBtn: document.getElementById('confirmDeleteBtn')
+        };
+        
+        // Funciones
+        function renderDashboards() {
+            elements.dashboardList.innerHTML = '';
+            
+            if (state.dashboards.length === 0) {
+                elements.emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            elements.emptyState.classList.add('hidden');
+            
+            state.dashboards.forEach(dashboard => {
+                const dashboardItem = document.createElement('div');
+                dashboardItem.className = `dashboard-item ${state.currentDashboard === dashboard.id ? 'active' : ''}`;
+                dashboardItem.dataset.id = dashboard.id;
+                
+                dashboardItem.innerHTML = `
+                    <span>${dashboard.name}</span>
+                    <div class="actions">
+                        <button class="edit" title="Editar"><i class="fas fa-edit"></i></button>
+                        <button class="delete" title="Eliminar"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                
+                // Eventos para los botones
+                dashboardItem.querySelector('.edit').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openEditModal(dashboard.id);
+                });
+                
+                dashboardItem.querySelector('.delete').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openDeleteModal(dashboard.id);
+                });
+                
+                // Evento para seleccionar el dashboard
+                dashboardItem.addEventListener('click', () => {
+                    selectDashboard(dashboard.id);
+                });
+                
+                elements.dashboardList.appendChild(dashboardItem);
+            });
+        }
+        
+        function selectDashboard(id) {
+            state.currentDashboard = id;
+            const dashboard = state.dashboards.find(d => d.id === id);
+            
+            if (dashboard) {
+                elements.noDashboard.classList.add('hidden');
+                elements.dashboardFrame.classList.remove('hidden');
+                elements.dashboardFrame.srcdoc = dashboard.iframe;
+            }
+            
+            renderDashboards();
+        }
+        
+        function openAddModal() {
+            state.editingId = null;
+            elements.modalTitle.textContent = 'Agregar Dashboard';
+            elements.dashboardName.value = '';
+            elements.dashboardIframe.value = '';
+            elements.dashboardModal.classList.remove('hidden');
+        }
+        
+        function openEditModal(id) {
+            state.editingId = id;
+            const dashboard = state.dashboards.find(d => d.id === id);
+            
+            if (dashboard) {
+                elements.modalTitle.textContent = 'Editar Dashboard';
+                elements.dashboardName.value = dashboard.name;
+                elements.dashboardIframe.value = dashboard.iframe;
+                elements.dashboardModal.classList.remove('hidden');
+            }
+        }
+        
+        function openDeleteModal(id) {
+            state.editingId = id;
+            elements.deleteModal.classList.remove('hidden');
+        }
+        
+        function saveDashboard() {
+            const name = elements.dashboardName.value.trim();
+            const iframe = elements.dashboardIframe.value.trim();
+            
+            if (!name || !iframe) {
+                alert('Por favor, completa todos los campos');
+                return;
+            }
+            
+            // Validar que el iframe tenga el formato correcto
+            if (!iframe.includes('<iframe') || !iframe.includes('</iframe>')) {
+                alert('Por favor, ingresa un código iframe válido');
+                return;
+            }
+            
+            if (state.editingId) {
+                // Editar dashboard existente
+                const index = state.dashboards.findIndex(d => d.id === state.editingId);
+                if (index !== -1) {
+                    state.dashboards[index].name = name;
+                    state.dashboards[index].iframe = iframe;
+                }
+            } else {
+                // Agregar nuevo dashboard
+                const newDashboard = {
+                    id: Date.now().toString(),
+                    name,
+                    iframe
+                };
+                state.dashboards.push(newDashboard);
+            }
+            
+            // Guardar en localStorage
+            localStorage.setItem('powerbiDashboards', JSON.stringify(state.dashboards));
+            
+            // Cerrar modal y actualizar la vista
+            elements.dashboardModal.classList.add('hidden');
+            renderDashboards();
+            
+            // Si estamos editando, mantener seleccionado el dashboard
+            if (state.editingId) {
+                selectDashboard(state.editingId);
+            }
+        }
+        
+        function deleteDashboard() {
+            state.dashboards = state.dashboards.filter(d => d.id !== state.editingId);
+            
+            // Si el dashboard eliminado era el actual, limpiar la vista
+            if (state.currentDashboard === state.editingId) {
+                state.currentDashboard = null;
+                elements.noDashboard.classList.remove('hidden');
+                elements.dashboardFrame.classList.add('hidden');
+            }
+            
+            // Guardar en localStorage
+            localStorage.setItem('powerbiDashboards', JSON.stringify(state.dashboards));
+            
+            // Cerrar modal y actualizar la vista
+            elements.deleteModal.classList.add('hidden');
+            renderDashboards();
+        }
+        
+        // Event Listeners
+        elements.addDashboardBtn.addEventListener('click', openAddModal);
+        
+        elements.closeModal.addEventListener('click', () => {
+            elements.dashboardModal.classList.add('hidden');
+        });
+        
+        elements.cancelBtn.addEventListener('click', () => {
+            elements.dashboardModal.classList.add('hidden');
+        });
+        
+        elements.dashboardForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveDashboard();
+        });
+        
+        elements.closeDeleteModal.addEventListener('click', () => {
+            elements.deleteModal.classList.add('hidden');
+        });
+        
+        elements.cancelDeleteBtn.addEventListener('click', () => {
+            elements.deleteModal.classList.add('hidden');
+        });
+        
+        elements.confirmDeleteBtn.addEventListener('click', deleteDashboard);
+        
+        // Cerrar modales al hacer clic fuera del contenido
+        window.addEventListener('click', (e) => {
+            if (e.target === elements.dashboardModal) {
+                elements.dashboardModal.classList.add('hidden');
+            }
+            if (e.target === elements.deleteModal) {
+                elements.deleteModal.classList.add('hidden');
+            }
+        });
+        
+        // Inicializar la aplicación
+        renderDashboards();
+        
+        // Si hay dashboards, seleccionar el primero
+        if (state.dashboards.length > 0 && !state.currentDashboard) {
+            selectDashboard(state.dashboards[0].id);
+        }
+    </script>
+</body>
+</html>
